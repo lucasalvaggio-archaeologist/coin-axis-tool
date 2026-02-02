@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Die Axis Calculator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(to bottom, #fffbeb, #ffffff);
+      min-height: 100vh;
+      padding: 16px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    h1 {
+      text-align: center;
+      color: #92400e;
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    
+    .instructions {
+      background: #fef3c7;
+      border: 2px solid #fcd34d;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .instructions p {
+      color: #78350f;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .image-section {
+      margin-bottom: 24px;
+    }
+    
+    .image-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .image-header h2 {
+      font-size: 18px;
+      color: #1f2937;
+    }
+    
+    .image-header span {
+      font-size: 14px;
+      color: #6b7280;
+    }
+    
+    .upload-box {
+      width: 100%;
+      height: 160px;
+      border: 4px dashed #f59e0b;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .upload-box:hover {
+      background: #fffbeb;
+    }
+    
+    .upload-box span {
+      color: #d97706;
+      font-weight: 500;
+      font-size: 16px;
+    }
+    
+    .image-container {
+      position: relative;
+      border: 2px solid #d1d5db;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .image-container img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      cursor: crosshair;
+      display: block;
+    }
+    
+    .image-container svg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .reset-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 6px 12px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .reset-btn:hover {
+      background: #dc2626;
+    }
+    
+    .buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .calc-btn {
+      flex: 1;
+      padding: 16px;
+      background: #f59e0b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .calc-btn:hover {
+      background: #d97706;
+    }
+    
+    .calc-btn:disabled {
+      background: #d1d5db;
+      cursor: not-allowed;
+    }
+    
+    .reset-all-btn {
+      padding: 16px 24px;
+      background: #9ca3af;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    .reset-all-btn:hover {
+      background: #6b7280;
+    }
+    
+    .result {
+      background: white;
+      border: 4px solid #f59e0b;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .result h2 {
+      color: #6b7280;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .result-values {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+    }
+    
+    .result-value {
+      text-align: center;
+    }
+    
+    .result-value .number {
+      font-size: 48px;
+      font-weight: 900;
+      color: #d97706;
+    }
+    
+    .result-value .label {
+      color: #6b7280;
+      font-size: 14px;
+    }
+    
+    .result-equals {
+      font-size: 40px;
+      color: #d1d5db;
+    }
+    
+    .result-copy {
+      margin-top: 20px;
+      padding: 12px;
+      background: #f3f4f6;
+      border-radius: 8px;
+    }
+    
+    .result-copy span {
+      color: #374151;
+    }
+    
+    .result-copy strong {
+      font-family: monospace;
+      font-size: 18px;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .credit {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ Die Axis Calculator</h1>
+    <p class="subtitle">Calculate die axis from photos</p>
+    
+    <div class="instructions">
+      <p>
+        <strong>1.</strong> Upload OBVERSE → mark 2 reference points (e.g. edge nicks)<br>
+        <strong>2.</strong> Upload REVERSE → mark the SAME 2 points, SAME order<br>
+        <strong>3.</strong> Press CALCULATE
+      </p>
+    </div>
+    
+    <!-- OBVERSE -->
+    <div class="image-section">
+      <div class="image-header">
+        <h2>OBVERSE</h2>
+        <span id="obverse-count">Points: 0/2</span>
+      </div>
+      <label id="obverse-upload" class="upload-box">
+        <span>📷 Click to upload OBVERSE</span>
+        <input type="file" accept="image/*" onchange="loadImage(event, 'obverse')">
+      </label>
+      <div id="obverse-container" class="image-container hidden">
+        <img id="obverse-img" onclick="addPoint(event, 'obverse')">
+        <svg id="obverse-svg"></svg>
+        <button class="reset-btn" onclick="resetImage('obverse')">Reset</button>
+      </div>
+    </div>
+    
+    <!-- REVERSE -->
+    <div class="image-section">
+      <div class="image-header">
+        <h2>REVERSE</h2>
+        <span id="reverse-count">Points: 0/2</span>
+      </div>
+      <label id="reverse-upload" class="upload-box">
+        <span>📷 Click to upload REVERSE</span>
+        <input type="file" accept="image/*" onchange="loadImage(event, 'reverse')">
+      </label>
+      <div id="reverse-container" class="image-container hidden">
+        <img id="reverse-img" onclick="addPoint(event, 'reverse')">
+        <svg id="reverse-svg"></svg>
+        <button class="reset-btn" onclick="resetImage('reverse')">Reset</button>
+      </div>
+    </div>
+    
+    <!-- Buttons -->
+    <div class="buttons">
+      <button id="calc-btn" class="calc-btn" onclick="calculate()" disabled>CALCULATE</button>
+      <button class="reset-all-btn" onclick="resetAll()">RESET</button>
+    </div>
+    
+    <!-- Result -->
+    <div id="result" class="result hidden">
+      <h2>DIE AXIS</h2>
+      <div class="result-values">
+        <div class="result-value">
+          <div class="number" id="result-clock">-</div>
+          <div class="label">o'clock</div>
+        </div>
+        <div class="result-equals">=</div>
+        <div class="result-value">
+          <div class="number" id="result-degrees">-</div>
+          <div class="label">degrees</div>
+        </div>
+      </div>
+      <div class="result-copy">
+        <span>For certificate: </span>
+        <strong id="result-text">-</strong>
+      </div>
+    </div>
+    
+    <div class="credit">
+      Luca Salvaggio — Studio Consulenza Antichità<br>
+      <a href="https://www.instagram.com/studioconsulenzaantichita/" target="_blank" style="color:#E1306C; text-decoration:none; display:inline-flex; align-items:center; gap:4px; margin:8px 0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#E1306C"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        @studioconsulenzaantichita
+      </a><br>
+      Die Axis Calculator v1.0 • Built with Claude AI (Anthropic)
+    </div>
+  </div>
+  
+  <script>
+    const state = {
+      obverse: { points: [] },
+      reverse: { points: [] }
+    };
+    
+    function loadImage(event, side) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById(`${side}-upload`).classList.add('hidden');
+        document.getElementById(`${side}-container`).classList.remove('hidden');
+        document.getElementById(`${side}-img`).src = e.target.result;
+        state[side].points = [];
+        updatePoints(side);
+        updateCalcButton();
+        document.getElementById('result').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    function addPoint(event, side) {
+      if (state[side].points.length >= 2) return;
+      
+      const img = event.target;
+      const rect = img.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      
+      state[side].points.push({ x, y });
+      updatePoints(side);
+      updateCalcButton();
+      document.getElementById('result').classList.add('hidden');
+    }
+    
+    function updatePoints(side) {
+      const svg = document.getElementById(`${side}-svg`);
+      const points = state[side].points;
+      
+      document.getElementById(`${side}-count`).textContent = `Points: ${points.length}/2`;
+      
+      let html = '';
+      
+      points.forEach((point, i) => {
+        const color = i === 0 ? '#ef4444' : '#22c55e';
+        html += `<circle cx="${point.x}%" cy="${point.y}%" r="12" fill="${color}" stroke="white" stroke-width="3"/>`;
+      });
+      
+      if (points.length === 2) {
+        html += `<line x1="${points[0].x}%" y1="${points[0].y}%" x2="${points[1].x}%" y2="${points[1].y}%" stroke="#eab308" stroke-width="4"/>`;
+      }
+      
+      svg.innerHTML = html;
+    }
+    
+    function updateCalcButton() {
+      const btn = document.getElementById('calc-btn');
+      btn.disabled = !(state.obverse.points.length === 2 && state.reverse.points.length === 2);
+    }
+    
+    function resetImage(side) {
+      state[side].points = [];
+      updatePoints(side);
+      updateCalcButton();
+      document.getElementById('result').classList.add('hidden');
+    }
+    
+    function resetAll() {
+      ['obverse', 'reverse'].forEach(side => {
+        state[side].points = [];
+        document.getElementById(`${side}-upload`).classList.remove('hidden');
+        document.getElementById(`${side}-container`).classList.add('hidden');
+        document.getElementById(`${side}-count`).textContent = 'Points: 0/2';
+        document.getElementById(`${side}-svg`).innerHTML = '';
+        document.querySelector(`#${side}-upload input`).value = '';
+      });
+      updateCalcButton();
+      document.getElementById('result').classList.add('hidden');
+    }
+    
+    function calculateAngle(points) {
+      const dx = points[1].x - points[0].x;
+      const dy = points[1].y - points[0].y;
+      return Math.atan2(dy, dx) * (180 / Math.PI);
+    }
+    
+    function calculate() {
+      const obverseAngle = calculateAngle(state.obverse.points);
+      const reverseAngle = calculateAngle(state.reverse.points);
+      const mirroredReverseAngle = 180 - reverseAngle;
+      
+      let diff = mirroredReverseAngle - obverseAngle;
+      
+      while (diff < 0) diff += 360;
+      while (diff >= 360) diff -= 360;
+      
+      // Correzione: inverti il risultato (360 - diff)
+      diff = (360 - diff) % 360;
+      
+      const hours = Math.round(diff / 30) % 12;
+      const clockPosition = hours === 0 ? 12 : hours;
+      const degrees = Math.round(diff);
+      
+      document.getElementById('result-clock').textContent = clockPosition + 'h';
+      document.getElementById('result-degrees').textContent = degrees + '°';
+      document.getElementById('result-text').textContent = `${clockPosition} o'clock (${degrees}°)`;
+      document.getElementById('result').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
